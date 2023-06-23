@@ -2,6 +2,7 @@
 using SFML.System;
 using MyEngine.GameObjects;
 using MyEngine;
+using MyEngine.Extensions;
 
 namespace ProblemInSpace.GameObjects
 {
@@ -13,11 +14,14 @@ namespace ProblemInSpace.GameObjects
         private static readonly MyEngineSprite bulletSprite = MyEngineSprite.newSprite(new Vector2f(), bulletTexturePath);
 
         public float slowering = 0.2f;
-        private const string bulletTexturePath = "Textures/bullet.png";
 
-        private Bullet(MyEngineSprite sprite, Camera camera, List<GameObject> gameObjects, Vector2f position, Vector2f velocity ) : base(sprite, camera)
+        private const string bulletTexturePath = "Textures/bullet.png";
+        public const float bulletStartSpeed = 20;
+
+        private Bullet(MyEngineSprite sprite, Player player, Camera camera, List<GameObject> gameObjects, Vector2f position, Vector2f velocity ) : base(sprite, camera)
         {
             this.sprite = sprite;
+            this.player = player;
             this.camera = camera;
             this.gameObjects = gameObjects;
             Position = position;
@@ -26,8 +30,8 @@ namespace ProblemInSpace.GameObjects
 
         public static Bullet Instantiate(Scene scene, Player player)
         {
-            float XVelocity = (float)Math.Cos(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * 10;
-            float YVelocity = (float)Math.Sin(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * 10;
+            float XVelocity = (float)Math.Cos(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * bulletStartSpeed;
+            float YVelocity = (float)Math.Sin(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * bulletStartSpeed;
 
             float XPosition = player.Position.X + (float)Math.Cos(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * player.WidthOnRender * 0.5f;
             float YPosition = player.Position.Y + (float)Math.Sin(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * player.WidthOnRender * 0.5f;
@@ -35,14 +39,51 @@ namespace ProblemInSpace.GameObjects
             Vector2f position = new Vector2f(XPosition, YPosition);
             Vector2f velocity = new Vector2f(XVelocity, YVelocity);
 
-            return new Bullet(new MyEngineSprite(bulletSprite), scene.camera, scene.gameObjects, position, velocity);
+            Bullet bullet = new Bullet(new MyEngineSprite(bulletSprite), player, scene.camera, scene.gameObjects, position, velocity);
+
+            bullet.Rotation = player.Rotation;
+
+            bullet.maxSpeed = bulletStartSpeed;
+
+            bullet.sprite.sprite.Origin = new Vector2f(bullet.sprite.sprite.Texture.Size.X * 0.5f, bullet.sprite.sprite.Texture.Size.Y * 0.5f);
+            bullet.sprite.sprite.Scale = new Vector2f(4, 4);
+
+            return bullet;
         }
 
+        private void CheckCollisions()
+        {
+            foreach (GameObject gameObject in gameObjects)
+            {
+                CheckCollisionsWithGameObject(gameObject);
+            }
+        }
 
+        private void CheckCollisionsWithGameObject(GameObject gameObject)
+        {
+            if (gameObject is SpaceObject && gameObject != this)
+            {
+                if (gameObject.toDestroy == false && gameObject != player)
+                {
+                    SpaceObject spaceObject = (SpaceObject)gameObject;
+                    float neededDistanceForCollisionSquared = (radius + spaceObject.radius) * (radius + spaceObject.radius);
+                    if (Position.DistanceSquared(spaceObject.Position) < neededDistanceForCollisionSquared)
+                    {
+                        gameObject.toDestroy = true;
+                        toDestroy = true;
+                    }
+                    return;
+                }
+            }
+        }
 
-        public void Update()
+        public override void Update()
         {
             maxSpeed -= slowering;
+            toDestroy = maxSpeed < bulletStartSpeed - 5;
+
+            CheckCollisions();
+
             base.Update();
         }
     }

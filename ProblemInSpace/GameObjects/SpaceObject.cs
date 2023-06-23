@@ -34,23 +34,26 @@ namespace ProblemInSpace.GameObjects
             }
         }
 
-        public Vector2f moveVelocity = new Vector2f();
+        public float radius;
+
+        public Vector2f velocity = new Vector2f();
         public float rotationVelocity = 0;
-        public float maxMoveSpeed = 10;
+        public float maxSpeed = 10;
         public float maxRotationVelocity = 30;
 
         public const string spaceObjectSpritePath = "Textures/space object.png";
 
-        public float Width
-            => sprite.sprite.TextureRect.Width;
+        public float WidthOnRender
+            => sprite.sprite.TextureRect.Width * sprite.sprite.Scale.X;
 
-        public float Height
-            => sprite.sprite.TextureRect.Height;
+        public float HeightOnRender
+            => sprite.sprite.TextureRect.Height * sprite.sprite.Scale.Y;
 
         protected SpaceObject(MyEngineSprite sprite, Camera camera)
         {
             this.sprite = sprite;
             this.camera = camera;
+            radius = sprite.sprite.Scale.X * sprite.Width;
         }
 
         public static SpaceObject Instantiate(Scene scene)
@@ -64,31 +67,31 @@ namespace ProblemInSpace.GameObjects
 
         protected void UpdatePosition()
         {
-            float moveSpeedSquared = new Vector2f().DistanceSquared(moveVelocity);
-            if (moveSpeedSquared > maxMoveSpeed * maxMoveSpeed)
+            float moveSpeedSquared = new Vector2f().DistanceSquared(velocity);
+            if (moveSpeedSquared > maxSpeed * maxSpeed)
             {
-                float moveSpeed =  new Vector2f().Distance(moveVelocity);
-                moveVelocity /= moveSpeed;
-                moveVelocity *= maxMoveSpeed;
+                float moveSpeed =  new Vector2f().Distance(velocity);
+                velocity /= moveSpeed;
+                velocity *= maxSpeed;
             }
-            Position += moveVelocity;
+            Position += velocity;
 
             CheckOutOfBounds();
         }
 
         protected void CheckOutOfBounds()
         {
-            if (camera.rectangle.Left > Position.X + (Width * 0.5f) + 0.1f)
-                Position = new Vector2f((camera.rectangle.Left + camera.rectangle.Width) + Width, Position.Y);
+            if (camera.rectangle.Left > Position.X + (WidthOnRender * 0.5f) + 0.1f)
+                Position = new Vector2f((camera.rectangle.Left + camera.rectangle.Width) + WidthOnRender, Position.Y);
 
-            else if ((camera.rectangle.Left + camera.rectangle.Width) < Position.X - Width - 0.1f)
-                Position = new Vector2f(camera.rectangle.Left - (Width * 0.5f), Position.Y);
+            else if ((camera.rectangle.Left + camera.rectangle.Width) < Position.X - WidthOnRender - 0.1f)
+                Position = new Vector2f(camera.rectangle.Left - (WidthOnRender * 0.5f), Position.Y);
 
-            if (camera.rectangle.Top > Position.Y + (Height * 0.5f))
-                Position = new Vector2f(Position.X, (camera.rectangle.Top + camera.rectangle.Height) + Height);
+            if (camera.rectangle.Top > Position.Y + (HeightOnRender * 0.5f))
+                Position = new Vector2f(Position.X, (camera.rectangle.Top + camera.rectangle.Height) + HeightOnRender);
 
-            else if ((camera.rectangle.Top + camera.rectangle.Height) < Position.Y - Height)
-                Position = new Vector2f(Position.X, camera.rectangle.Top - (Height * 0.5f));
+            else if ((camera.rectangle.Top + camera.rectangle.Height) < Position.Y - HeightOnRender)
+                Position = new Vector2f(Position.X, camera.rectangle.Top - (HeightOnRender * 0.5f));
         }
 
         protected void UpdateRotation()
