@@ -1,5 +1,7 @@
 ﻿using MyEngine;
 using ProblemInSpace.States;
+using SFML.Window;
+using SFML.Graphics;
 
 namespace ProblemInSpace
 {
@@ -7,7 +9,7 @@ namespace ProblemInSpace
     {
         protected override void SetStartingState()
         {
-            state = new InGame();
+            SetState(new InGame());
         }
     }
 }
