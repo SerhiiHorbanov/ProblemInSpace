@@ -2,6 +2,7 @@
 using MyEngine.GameObjects.Interfaces;
 using MyEngine.Render;
 using MyEngine;
+using MyEngine.Extensions;
 using SFML.System;
 
 namespace ProblemInSpace.GameObjects
@@ -35,8 +36,8 @@ namespace ProblemInSpace.GameObjects
 
         public Vector2f moveVelocity = new Vector2f();
         public float rotationVelocity = 0;
-        public float maxMoveVelocity = 10;
-        public float maxRorationVelocity = 30;
+        public float maxMoveSpeed = 10;
+        public float maxRotationVelocity = 30;
 
         public const string spaceObjectSpritePath = "Textures/space object.png";
 
@@ -57,8 +58,14 @@ namespace ProblemInSpace.GameObjects
 
         protected void UpdatePosition()
         {
+            float moveSpeedSquared = new Vector2f().DistanceSquared(moveVelocity);
+            if (moveSpeedSquared > maxMoveSpeed * maxMoveSpeed)
+            {
+                float moveSpeed =  new Vector2f().Distance(moveVelocity);
+                moveVelocity /= moveSpeed;
+                moveVelocity *= maxMoveSpeed;
+            }
             Position += moveVelocity;
-
         }
 
         protected void UpdateRotation()
