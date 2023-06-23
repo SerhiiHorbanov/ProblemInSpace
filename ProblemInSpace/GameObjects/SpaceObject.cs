@@ -41,6 +41,12 @@ namespace ProblemInSpace.GameObjects
 
         public const string spaceObjectSpritePath = "Textures/space object.png";
 
+        public float Width
+            => sprite.sprite.TextureRect.Width;
+
+        public float Height
+            => sprite.sprite.TextureRect.Height;
+
         protected SpaceObject(MyEngineSprite sprite, Camera camera)
         {
             this.sprite = sprite;
@@ -66,6 +72,23 @@ namespace ProblemInSpace.GameObjects
                 moveVelocity *= maxMoveSpeed;
             }
             Position += moveVelocity;
+
+            CheckOutOfBounds();
+        }
+
+        protected void CheckOutOfBounds()
+        {
+            if (camera.rectangle.Left > Position.X + (Width * 0.5f) + 0.1f)
+                Position = new Vector2f((camera.rectangle.Left + camera.rectangle.Width) + Width, Position.Y);
+
+            else if ((camera.rectangle.Left + camera.rectangle.Width) < Position.X - Width - 0.1f)
+                Position = new Vector2f(camera.rectangle.Left - (Width * 0.5f), Position.Y);
+
+            if (camera.rectangle.Top > Position.Y + (Height * 0.5f))
+                Position = new Vector2f(Position.X, (camera.rectangle.Top + camera.rectangle.Height) + Height);
+
+            else if ((camera.rectangle.Top + camera.rectangle.Height) < Position.Y - Height)
+                Position = new Vector2f(Position.X, camera.rectangle.Top - (Height * 0.5f));
         }
 
         protected void UpdateRotation()
