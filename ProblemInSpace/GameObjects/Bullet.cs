@@ -33,17 +33,15 @@ namespace ProblemInSpace.GameObjects
             float XVelocity = (float)Math.Cos(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * bulletStartSpeed;
             float YVelocity = (float)Math.Sin(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * bulletStartSpeed;
 
-            float XPosition = player.Position.X + (float)Math.Cos(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * player.WidthOnRender * 0.5f;
-            float YPosition = player.Position.Y + (float)Math.Sin(player.Rotation * ProblemInSpaceGame.degreesToRadiansMultiplayer) * player.WidthOnRender * 0.5f;
-
-            Vector2f position = new Vector2f(XPosition, YPosition);
             Vector2f velocity = new Vector2f(XVelocity, YVelocity);
 
-            Bullet bullet = new Bullet(new MyEngineSprite(bulletSprite), player, scene.camera, scene.gameObjects, position, velocity);
+            Bullet bullet = new Bullet(new MyEngineSprite(bulletSprite), player, scene.camera, scene.gameObjects, player.Position, velocity);
 
             bullet.Rotation = player.Rotation;
 
             bullet.maxSpeed = bulletStartSpeed;
+
+            bullet.radius = 4;
 
             bullet.sprite.sprite.Origin = new Vector2f(bullet.sprite.sprite.Texture.Size.X * 0.5f, bullet.sprite.sprite.Texture.Size.Y * 0.5f);
             bullet.sprite.sprite.Scale = new Vector2f(4, 4);
@@ -66,7 +64,7 @@ namespace ProblemInSpace.GameObjects
                 if (gameObject.toDestroy == false && gameObject != player)
                 {
                     SpaceObject spaceObject = (SpaceObject)gameObject;
-                    float neededDistanceForCollisionSquared = (radius + spaceObject.radius) * (radius + spaceObject.radius);
+                    float neededDistanceForCollisionSquared = spaceObject.radius * spaceObject.radius;
                     if (Position.DistanceSquared(spaceObject.Position) < neededDistanceForCollisionSquared)
                     {
                         gameObject.toDestroy = true;

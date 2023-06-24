@@ -6,7 +6,7 @@ using SFML.Graphics;
 using SFML.Window;
 using ProblemInSpace.GameObjects;
 using MyEngine.Input;
-//using MyEngine.MyEngineSound;
+using MyEngine.MyEngineSound;
 
 namespace ProblemInSpace.States
 {
@@ -16,7 +16,7 @@ namespace ProblemInSpace.States
         public PlayerInput input = new PlayerInput();
         public override void Initialize()
         {
-            //SoundManager.LoadSound("metal pipe.wav", "metal pipe");
+            SoundManager.LoadSound("metal pipe.wav", "metal pipe");
 
             input.AddBinding("forward", Keyboard.Key.W);
             input.AddBinding("right", Keyboard.Key.D);
@@ -43,7 +43,6 @@ namespace ProblemInSpace.States
         public override void Render()
         {
             scene.Render();
-            Game.window.Display();
         }
 
         public override void Update()

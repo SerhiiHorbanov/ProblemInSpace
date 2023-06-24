@@ -5,7 +5,7 @@ using MyEngine.Input;
 using MyEngine.Extensions;
 using MyEngine;
 using SFML.System;
-//using MyEngine.MyEngineSound;
+using MyEngine.MyEngineSound;
 
 namespace ProblemInSpace.GameObjects
 {
@@ -19,6 +19,7 @@ namespace ProblemInSpace.GameObjects
         float moveSpeed = 0.3f;
 
         public const string playerTexturePath = "Textures/player.png";
+        public const float playerRadius = 12;
 
         private Player(PlayerInput input, MyEngineSprite sprite, Camera camera, Scene scene) : base(sprite, camera)
         {
@@ -37,12 +38,14 @@ namespace ProblemInSpace.GameObjects
 
             Player player = new Player(input, sprite, scene.camera, scene);
 
-            //player.OnDestroy += player.Destroy;
+            player.OnDestroy += player.Destroy;
 
             float x = ProblemInSpaceGame.random.Next((int)scene.camera.rectangle.Left, (int)(scene.camera.rectangle.Left + scene.camera.rectangle.Width));
             float y = ProblemInSpaceGame.random.Next((int)scene.camera.rectangle.Top, (int)(scene.camera.rectangle.Top + scene.camera.rectangle.Height));
             player.Position = new Vector2f(x, y);
-            
+
+            player.radius = playerRadius;
+
             return player;
         }
 
@@ -108,7 +111,7 @@ namespace ProblemInSpace.GameObjects
 
         public void Destroy()
         {
-            //SoundManager.PlaySound("metal pipe");
+            SoundManager.PlaySound("metal pipe");
         }
     }
 }

@@ -43,6 +43,8 @@ namespace ProblemInSpace.GameObjects
 
             asteroid.velocity = new Vector2f(velocityX, velocityY);
 
+            asteroid.radius = data.radius;
+
             return asteroid;
         }
 
