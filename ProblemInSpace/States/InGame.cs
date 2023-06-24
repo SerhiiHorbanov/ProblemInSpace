@@ -14,6 +14,7 @@ namespace ProblemInSpace.States
     {
         public Scene scene;
         public PlayerInput input = new PlayerInput();
+        const int startingAsteroidCound = 5;
         public override void Initialize()
         {
             SoundManager.LoadSound("metal pipe.wav", "metal pipe");
@@ -31,7 +32,8 @@ namespace ProblemInSpace.States
 
             scene.Add(Player.Instantiate(scene, input));
 
-            scene.Add(Asteroid.Instantiate(scene.camera));
+            for(int i = 0; i < startingAsteroidCound; i++)
+                scene.Add(Asteroid.Instantiate(scene.camera));
         }
 
         public override void Input()
